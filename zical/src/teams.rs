@@ -15,21 +15,19 @@ use rocket::Route;
 use rocket_contrib::json::Json;
 use tracing::instrument;
 
-use zical::db::models::*;
+use crate::{db::models::*, DbConn};
 
-use crate::DbConn;
-
-pub const MOUNT_POINT: &'static str = "/teams";
+pub const MOUNT_POINT: &str = "/teams";
 
 pub fn routes() -> Vec<Route> {
     routes![get_teams, new_team]
 }
 
 /// Return a list of all the teams.
-#[get("/")]
 #[instrument]
+#[get("/")]
 fn get_teams(conn: DbConn) -> Json<Vec<Team>> {
-    use zical::db::schema::teams::dsl::*;
+    use crate::db::schema::teams::dsl::*;
 
     let results = teams.load::<Team>(&*conn).expect("Error loading teams");
 
@@ -37,10 +35,10 @@ fn get_teams(conn: DbConn) -> Json<Vec<Team>> {
 }
 
 /// Create a new team.
-#[post("/", format = "json", data = "<team>")]
 #[instrument]
+#[post("/", format = "json", data = "<team>")]
 fn new_team(conn: DbConn, team: Json<NewTeam>) -> Json<Team> {
-    use zical::db::schema::teams;
+    use crate::db::schema::teams;
 
     let team = diesel::insert_into(teams::table)
         .values(&team.0)

@@ -13,23 +13,29 @@
 #![allow(clippy::unit_arg, clippy::let_unit_value)]
 
 #[macro_use]
+extern crate diesel;
+#[macro_use]
 extern crate diesel_migrations;
 #[macro_use]
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
-#[macro_use]
-extern crate tracing;
+
+pub mod db;
+pub mod teams;
 
 use diesel_migrations::embed_migrations;
-
-mod teams;
 
 embed_migrations! {}
 
 #[database("zical")]
-#[derive(Debug)]
 pub struct DbConn(diesel::PgConnection);
+
+impl std::fmt::Debug for DbConn {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "DbConn")
+    }
+}
 
 fn main() {
     rocket::ignite()

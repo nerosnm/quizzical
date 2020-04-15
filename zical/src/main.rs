@@ -18,17 +18,18 @@ extern crate diesel_migrations;
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
+#[macro_use]
+extern crate tracing;
 
-use diesel::prelude::*;
 use diesel_migrations::embed_migrations;
-use rocket_contrib::json::Json;
 
-use zical::db::models::*;
+mod teams;
+
+embed_migrations! {}
 
 #[database("zical")]
-struct DbConn(diesel::PgConnection);
-
-embed_migrations!();
+#[derive(Debug)]
+pub struct DbConn(diesel::PgConnection);
 
 fn main() {
     rocket::ignite()
@@ -39,7 +40,8 @@ fn main() {
                 DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
             },
         ))
-        .mount("/", routes![healthcheck, get_teams, new_team])
+        .mount("/", routes![healthcheck])
+        .mount(teams::MOUNT_POINT, teams::routes())
         .launch();
 }
 
@@ -48,27 +50,4 @@ fn main() {
 /// Always returns `200 OK` with no content when app is running.
 #[get("/healthcheck")]
 fn healthcheck() {
-}
-
-/// Return a list of all the teams.
-#[get("/teams")]
-fn get_teams(conn: DbConn) -> Json<Vec<Team>> {
-    use zical::db::schema::teams::dsl::*;
-
-    let results = teams.load::<Team>(&*conn).expect("Error loading teams");
-
-    Json(results)
-}
-
-/// Create a new team.
-#[post("/teams", format = "json", data = "<team>")]
-fn new_team(conn: DbConn, team: Json<NewTeam>) -> Json<Team> {
-    use zical::db::schema::teams;
-
-    let team = diesel::insert_into(teams::table)
-        .values(&team.0)
-        .get_result(&*conn)
-        .expect("Error saving new post");
-
-    Json(team)
 }

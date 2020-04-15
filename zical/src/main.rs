@@ -9,8 +9,23 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
-use zical::print_hello;
+#![feature(proc_macro_hygiene, decl_macro)]
+
+#[macro_use]
+extern crate rocket;
+
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
+#[get("/healthcheck")]
+fn healthcheck() -> () {
+    ()
+}
 
 fn main() {
-    print_hello();
+    rocket::ignite()
+        .mount("/", routes![index, healthcheck])
+        .launch();
 }

@@ -8,13 +8,13 @@ RUN cargo build --release
 
 # Copy compiled app to /app
 RUN mkdir -p /app
-RUN cp target/release/quiz /app/quiz
+RUN cp target/release/zical /app/
 
 FROM ubuntu:18.04 AS run
 WORKDIR /app
 
 # Copy compiled app from build phase
-COPY --from=build /app/quiz .
+COPY --from=build /app/zical .
 
 # Define the entrypoint for running
-ENTRYPOINT /app/quiz
+ENTRYPOINT /app/zical

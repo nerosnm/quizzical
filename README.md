@@ -1,5 +1,7 @@
 # Quizzical
 
+![Docker](https://github.com/nerosnm/quizzical/workflows/Docker/badge.svg)
+
 Quizzical is a lightweight service (frontend and backend) for running a virtual pub quiz.
 
 ## Build

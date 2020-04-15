@@ -1,7 +1,7 @@
-//  lib.rs
+//  db/schema.rs
 //  zical
 //
-//  Created by Søren Mortensen <soren@neros.dev> on 2020-04-15.
+//  Created by Diesel CLI <diesel-cli@example.com> on 2020-04-15.
 //  Copyright (c) 2020 Søren Mortensen.
 //
 //  Licensed under the Apache License, Version 2.0, <LICENSE-APACHE or
@@ -9,7 +9,9 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
-#[macro_use]
-extern crate diesel;
-
-pub mod db;
+table! {
+    teams (id) {
+        id -> Int4,
+        name -> Varchar,
+    }
+}

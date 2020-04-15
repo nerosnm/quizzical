@@ -1,0 +1,2 @@
+[global.databases]
+zical = { url = "postgres://quiz:zical@localhost/zical" }

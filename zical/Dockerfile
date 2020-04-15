@@ -19,5 +19,8 @@ WORKDIR /app
 # Copy compiled app from build phase
 COPY --from=build /app/zical .
 
+# Install PostgreSQL
+RUN apt-get update && apt-get -y install postgresql
+
 # Define the entrypoint for running
-CMD ROCKET_PORT=$PORT /app/zical
+CMD ROCKET_PORT=$PORT ROCKET_DATABASES="{zical={url=\"$DATABASE_URL\"}}" /app/zical

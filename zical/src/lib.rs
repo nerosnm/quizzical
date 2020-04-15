@@ -1,4 +1,4 @@
-//  main.rs
+//  lib.rs
 //  zical
 //
 //  Created by Søren Mortensen <soren@neros.dev> on 2020-04-15.
@@ -9,8 +9,6 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
-use zical::print_hello;
-
-fn main() {
-    print_hello();
+pub fn print_hello() {
+    println!("Hello, world!");
 }

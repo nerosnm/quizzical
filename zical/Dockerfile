@@ -1,6 +1,9 @@
 FROM rust:1.42.0 AS build
 WORKDIR /src
 
+# Install nightly rust
+RUN rustup update nightly && rustup default nightly
+
 # Copy sources to /src
 COPY . .
 # Build app
@@ -17,4 +20,4 @@ WORKDIR /app
 COPY --from=build /app/zical .
 
 # Define the entrypoint for running
-ENTRYPOINT /app/zical
+CMD ROCKET_PORT=$PORT /app/zical

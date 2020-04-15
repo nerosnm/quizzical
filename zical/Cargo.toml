@@ -18,3 +18,4 @@ name = "zical"
 path = "src/main.rs"
 
 [dependencies]
+rocket = "^0.4"

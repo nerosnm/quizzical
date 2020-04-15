@@ -13,11 +13,14 @@
 #![allow(clippy::unit_arg, clippy::let_unit_value)]
 
 #[macro_use]
+extern crate diesel_migrations;
+#[macro_use]
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
 
 use diesel::prelude::*;
+use diesel_migrations::embed_migrations;
 use rocket_contrib::json::Json;
 
 use zical::db::models::*;
@@ -25,9 +28,17 @@ use zical::db::models::*;
 #[database("zical")]
 struct DbConn(diesel::PgConnection);
 
+embed_migrations!();
+
 fn main() {
     rocket::ignite()
         .attach(DbConn::fairing())
+        .attach(rocket::fairing::AdHoc::on_launch(
+            "Run Migrations",
+            |rocket| {
+                DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
+            },
+        ))
         .mount("/", routes![healthcheck, get_teams, new_team])
         .launch();
 }

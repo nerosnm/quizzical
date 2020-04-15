@@ -19,9 +19,9 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
+/// Healthcheck endpoint, always returns `200 OK` with no content when app is running.
 #[get("/healthcheck")]
-fn healthcheck() -> () {
-    ()
+fn healthcheck() {
 }
 
 fn main() {

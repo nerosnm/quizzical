@@ -18,6 +18,18 @@ name = "zical"
 path = "src/main.rs"
 
 [dependencies]
-diesel = { version = "^1.4", features = ["postgres"] }
 dotenv = "^0.15"
 rocket = "^0.4"
+
+[dependencies.diesel]
+version = "^1.4"
+features = ["postgres"]
+
+[dependencies.rocket_contrib]
+version = "^0.4"
+default_features = false
+features = ["diesel_postgres_pool", "json"]
+
+[dependencies.serde]
+version = "^1.0"
+features = ["derive"]

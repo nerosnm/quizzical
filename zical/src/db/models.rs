@@ -10,9 +10,18 @@
 //  copied, modified, or distributed except according to those terms.
 
 use diesel::Queryable;
+use serde::{Deserialize, Serialize};
 
-#[derive(Queryable)]
+use super::schema::teams;
+
+#[derive(Queryable, Serialize)]
 pub struct Team {
-    pub id: usize,
+    pub id: i32,
     pub name: String,
+}
+
+#[derive(Insertable, Deserialize)]
+#[table_name = "teams"]
+pub struct NewTeam<'a> {
+    pub name: &'a str,
 }

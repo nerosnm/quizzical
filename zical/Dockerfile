@@ -20,4 +20,4 @@ WORKDIR /app
 COPY --from=build /app/zical .
 
 # Define the entrypoint for running
-CMD ROCKET_PORT=$PORT /app/zical
+CMD ROCKET_PORT=$PORT ROCKET_DATABASES="{zical={url=\"$DATABASE_URL\"}}" /app/zical

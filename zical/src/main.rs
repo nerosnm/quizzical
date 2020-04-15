@@ -14,19 +14,50 @@
 
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
+use diesel::prelude::*;
+use rocket_contrib::json::Json;
+
+use zical::db::models::*;
+
+#[database("zical")]
+struct DbConn(diesel::PgConnection);
+
+fn main() {
+    rocket::ignite()
+        .attach(DbConn::fairing())
+        .mount("/", routes![healthcheck, get_teams, new_team])
+        .launch();
 }
 
-/// Healthcheck endpoint, always returns `200 OK` with no content when app is running.
+/// Server health check.
+///
+/// Always returns `200 OK` with no content when app is running.
 #[get("/healthcheck")]
 fn healthcheck() {
 }
 
-fn main() {
-    rocket::ignite()
-        .mount("/", routes![index, healthcheck])
-        .launch();
+/// Return a list of all the teams.
+#[get("/teams")]
+fn get_teams(conn: DbConn) -> Json<Vec<Team>> {
+    use zical::db::schema::teams::dsl::*;
+
+    let results = teams.load::<Team>(&*conn).expect("Error loading teams");
+
+    Json(results)
+}
+
+/// Create a new team.
+#[post("/teams", format = "json", data = "<team>")]
+fn new_team(conn: DbConn, team: Json<NewTeam>) -> Json<Team> {
+    use zical::db::schema::teams;
+
+    let team = diesel::insert_into(teams::table)
+        .values(&team.0)
+        .get_result(&*conn)
+        .expect("Error saving new post");
+
+    Json(team)
 }

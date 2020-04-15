@@ -1,4 +1,4 @@
-//  lib.rs
+//  db/mod.rs
 //  zical
 //
 //  Created by Søren Mortensen <soren@neros.dev> on 2020-04-15.
@@ -9,7 +9,11 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
-#[macro_use]
-extern crate diesel;
+pub mod models;
+pub mod schema;
 
-pub mod db;
+use diesel::{pg::PgConnection, prelude::*};
+
+pub fn establish_connection(database_url: &str) -> PgConnection {
+    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
+}

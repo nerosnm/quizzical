@@ -18,4 +18,6 @@ name = "zical"
 path = "src/main.rs"
 
 [dependencies]
+diesel = { version = "^1.4", features = ["postgres"] }
+dotenv = "^0.15"
 rocket = "^0.4"

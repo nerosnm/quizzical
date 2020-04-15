@@ -1,4 +1,4 @@
-//  lib.rs
+//  db/models.rs
 //  zical
 //
 //  Created by Søren Mortensen <soren@neros.dev> on 2020-04-15.
@@ -9,7 +9,10 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
-#[macro_use]
-extern crate diesel;
+use diesel::Queryable;
 
-pub mod db;
+#[derive(Queryable)]
+pub struct Team {
+    pub id: usize,
+    pub name: String,
+}

@@ -10,6 +10,7 @@
 //  copied, modified, or distributed except according to those terms.
 
 #![feature(proc_macro_hygiene, decl_macro)]
+#![allow(clippy::unit_arg, clippy::let_unit_value)]
 
 #[macro_use]
 extern crate rocket;

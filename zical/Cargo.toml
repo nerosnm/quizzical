@@ -3,5 +3,18 @@ name = "zical"
 version = "0.1.0"
 authors = ["Søren Mortensen <soren@neros.dev>"]
 edition = "2018"
+license = "MIT OR Apache-2.0"
+
+publish = false
+
+description = "Lightweight service for running virtual pub quizzes."
+homepage = "https://github.com/nerosnm/quizzical"
+readme = "README.md"
+
+exclude = ["Dockerfile", ".dockerignore"]
+
+[[bin]]
+name = "zical"
+path = "src/main.rs"
 
 [dependencies]

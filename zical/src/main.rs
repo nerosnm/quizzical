@@ -28,17 +28,15 @@ pub mod db;
 
 use diesel_migrations::embed_migrations;
 
-use db::DbConn;
-
 embed_migrations! {}
 
 fn main() {
     api::ignite()
-        .attach(DbConn::fairing())
+        .attach(db::DbConn::fairing())
         .attach(rocket::fairing::AdHoc::on_launch(
             "Run Migrations",
             |rocket| {
-                DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
+                db::DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
             },
         ))
         .launch();

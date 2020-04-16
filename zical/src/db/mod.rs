@@ -9,5 +9,18 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
+//! Database functionality and types.
+//!
+//! This module includes Diesel-generated schema, models, and a `DbConn` type for use with Rocket.
+
 pub mod models;
 pub mod schema;
+
+#[database("zical")]
+pub struct DbConn(diesel::PgConnection);
+
+impl std::fmt::Debug for DbConn {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "DbConn")
+    }
+}

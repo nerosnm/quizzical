@@ -1,4 +1,4 @@
-//  teams.rs
+//  api/teams.rs
 //  zical
 //
 //  Created by Søren Mortensen <soren@neros.dev> on 2020-04-15.
@@ -8,6 +8,8 @@
 //  http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
+
+//! Endpoints for working with teams.
 
 use diesel::prelude::*;
 use log::info;

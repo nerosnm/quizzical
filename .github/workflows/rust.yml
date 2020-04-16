@@ -7,17 +7,6 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: hecrj/setup-rust-action@v1
-      with:
-        rust-version: nightly
-    - uses: actions/checkout@v2
-    - name: Build
-      run: cd zical && cargo build --verbose
-
   test:
     runs-on: ubuntu-latest
 
@@ -26,8 +15,8 @@ jobs:
       with:
         rust-version: nightly
     - uses: actions/checkout@v2
-    - name: Run tests
-      run: cd zical && cargo test --verbose
+    - name: Build and Test
+      run: cd zical && cargo build --verbose && cargo test --verbose
   
   lint:
     runs-on: ubuntu-latest
@@ -38,7 +27,7 @@ jobs:
         rust-version: nightly
         components: rustfmt
     - uses: actions/checkout@v1
-    - name: Clippy
+    - name: Rustfmt
       run: cd zical && cargo +nightly fmt -- --check
 
   clippy:

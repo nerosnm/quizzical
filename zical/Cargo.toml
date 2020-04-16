@@ -9,7 +9,7 @@ publish = false
 
 description = "Lightweight service for running virtual pub quizzes."
 homepage = "https://github.com/nerosnm/quizzical"
-readme = "README.md"
+readme = "../README.md"
 
 exclude = ["Dockerfile", ".dockerignore"]
 

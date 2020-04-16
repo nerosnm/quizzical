@@ -9,6 +9,8 @@
 //  http://opensource.org/licenses/MIT>, at your option. This file may not be
 //  copied, modified, or distributed except according to those terms.
 
+//! Zical is a backend server for running virtual pub quizzes.
+
 #![feature(proc_macro_hygiene, decl_macro)]
 #![allow(clippy::unit_arg, clippy::let_unit_value)]
 
@@ -21,39 +23,22 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
 
+pub mod api;
 pub mod db;
-pub mod teams;
+pub mod service;
 
 use diesel_migrations::embed_migrations;
 
 embed_migrations! {}
 
-#[database("zical")]
-pub struct DbConn(diesel::PgConnection);
-
-impl std::fmt::Debug for DbConn {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "DbConn")
-    }
-}
-
 fn main() {
-    rocket::ignite()
-        .attach(DbConn::fairing())
+    api::ignite()
+        .attach(db::DbConn::fairing())
         .attach(rocket::fairing::AdHoc::on_launch(
             "Run Migrations",
             |rocket| {
-                DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
+                db::DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
             },
         ))
-        .mount("/", routes![healthcheck])
-        .mount(teams::MOUNT_POINT, teams::routes())
         .launch();
-}
-
-/// Server health check.
-///
-/// Always returns `200 OK` with no content when app is running.
-#[get("/healthcheck")]
-fn healthcheck() {
 }

@@ -11,59 +11,61 @@
 
 //! Endpoints for working with teams.
 
-use diesel::prelude::*;
 use log::info;
 use rocket::Route;
 use rocket_contrib::json::Json;
 
-use crate::db::{models::*, DbConn};
+use crate::{
+    db::{models::*, DbConn},
+    service::teams,
+};
 
 /// Root mount point for routes in this module.
 pub const MOUNT_POINT: &str = "/teams";
 
 /// Return a list of the routes to mount from this module.
 pub fn routes() -> Vec<Route> {
-    routes![new_team, get_teams, delete_team]
+    routes![new_team, get_teams, get_teams_search, get_team, delete_team]
 }
 
 /// Create a new team.
 #[post("/", format = "json", data = "<team>")]
 fn new_team(conn: DbConn, team: Json<NewTeam>) -> Json<Team> {
-    use crate::db::schema::teams;
+    info!("Creating new team with name \"{}\"", team.name);
 
-    info!("Creating new team with name {}", team.name);
-
-    let team = diesel::insert_into(teams::table)
-        .values(&team.0)
-        .get_result(&*conn)
-        .expect("Error saving new post");
-
-    Json(team)
+    Json(teams::new_team(&*conn, &*team))
 }
 
 /// Return a list of all the teams.
 #[get("/")]
 fn get_teams(conn: DbConn) -> Json<Vec<Team>> {
-    use crate::db::schema::teams::dsl::*;
-
     info!("Retrieving a list of all teams");
 
-    let results = teams.load::<Team>(&*conn).expect("Error loading teams");
+    Json(teams::get_teams(&*conn))
+}
 
-    Json(results)
+/// Return a list of all teams whose name contains the given substring.
+#[get("/?<search>")]
+fn get_teams_search(conn: DbConn, search: String) -> Json<Vec<Team>> {
+    info!("Searching for teams with name matching \"{}\"", search);
+
+    Json(teams::search_teams(&*conn, &search))
+}
+
+/// Return the team with the given ID, if found.
+#[get("/<id>")]
+fn get_team(conn: DbConn, id: i32) -> Json<Option<Team>> {
+    info!("Getting team with ID {}", id);
+
+    Json(teams::get_team(&*conn, id))
 }
 
 /// Delete an existing team.
-#[delete("/<team_id>")]
-fn delete_team(conn: DbConn, team_id: i32) -> Json<Result<(), String>> {
-    use crate::db::schema::teams::dsl::*;
+///
+/// Returns the ID of the deleted team if successful.
+#[delete("/<id>")]
+fn delete_team(conn: DbConn, id: i32) -> Json<Option<i32>> {
+    info!("Deleting team with ID {}", id);
 
-    info!("Deleting team with ID {}", team_id);
-
-    let result = diesel::delete(teams.filter(id.eq(team_id)))
-        .execute(&*conn)
-        .map(|_| ())
-        .map_err(|e| format!("Unable to delete team: {}", e));
-
-    Json(result)
+    Json(teams::delete_team(&*conn, id))
 }

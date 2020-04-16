@@ -16,7 +16,7 @@ use log::info;
 use rocket::Route;
 use rocket_contrib::json::Json;
 
-use crate::{db::models::*, DbConn};
+use crate::db::{models::*, DbConn};
 
 /// Root mount point for routes in this module.
 pub const MOUNT_POINT: &str = "/teams";

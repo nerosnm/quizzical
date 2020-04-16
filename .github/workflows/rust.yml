@@ -15,10 +15,8 @@ jobs:
       with:
         rust-version: nightly
     - uses: actions/checkout@v2
-      with:
-        path: zical
     - name: Build
-      run: cargo build --verbose
+      run: cd zical && cargo build --verbose
 
   test:
     runs-on: ubuntu-latest
@@ -28,10 +26,8 @@ jobs:
       with:
         rust-version: nightly
     - uses: actions/checkout@v2
-      with:
-        path: zical
     - name: Run tests
-      run: cargo test --verbose
+      run: cd zical && cargo test --verbose
   
   lint:
     runs-on: ubuntu-latest
@@ -42,10 +38,8 @@ jobs:
         rust-version: nightly
         components: rustfmt
     - uses: actions/checkout@v1
-      with:
-        path: zical
     - name: Clippy
-      run: cargo +nightly fmt -- --check
+      run: cd zical && cargo +nightly fmt -- --check
 
   clippy:
     runs-on: ubuntu-latest
@@ -56,7 +50,5 @@ jobs:
         rust-version: nightly
         components: clippy
     - uses: actions/checkout@v1
-      with:
-        path: zical
     - name: Clippy
-      run: cargo clippy -- -D warnings
+      run: cd zical && cargo clippy -- -D warnings

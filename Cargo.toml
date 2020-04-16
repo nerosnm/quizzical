@@ -7,11 +7,9 @@ license = "MIT OR Apache-2.0"
 
 publish = false
 
-description = "Lightweight service for running virtual pub quizzes."
-homepage = "https://github.com/nerosnm/quizzical"
-readme = "../README.md"
-
-exclude = ["Dockerfile", ".dockerignore"]
+description = "Backend web server for running virtual pub quizzes."
+homepage = "https://github.com/nerosnm/zical"
+readme = "README.md"
 
 [[bin]]
 name = "zical"

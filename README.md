@@ -2,7 +2,8 @@
 
 ![Rust](https://github.com/nerosnm/quizzical/workflows/Rust/badge.svg)
 
-Zical is the backend half of Quizzical, a web app for running virtual pub quizzes.
+Zical is the backend half of Quizzical, a web app for running virtual pub quizzes. You can find the 
+frontend [here](https://github.com/nerosnm/quiz).
 
 ## Cargo
 

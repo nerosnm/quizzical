@@ -9,6 +9,7 @@ publish = false
 
 description = "Backend web server for running virtual pub quizzes."
 homepage = "https://github.com/nerosnm/zical"
+repository = "https://github.com/nerosnm/zical"
 readme = "README.md"
 
 [[bin]]
@@ -17,7 +18,7 @@ path = "src/main.rs"
 
 [dependencies]
 diesel_migrations = "^1.4"
-log = "*"
+log = "^0.4"
 rocket = "^0.4"
 
 [dependencies.diesel]

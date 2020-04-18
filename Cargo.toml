@@ -20,6 +20,7 @@ path = "src/main.rs"
 diesel_migrations = "^1.4"
 log = "^0.4"
 rocket = "^0.4"
+rocket_cors = "^0.5"
 
 [dependencies.diesel]
 version = "^1.4"

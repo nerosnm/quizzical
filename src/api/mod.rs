@@ -20,6 +20,7 @@
 pub mod teams;
 
 use rocket::{Rocket, Route};
+use rocket_contrib::json::JsonValue;
 
 /// Ignite a [`Rocket`][rocket], attach endpoints and return it.
 ///
@@ -28,6 +29,7 @@ pub fn ignite() -> Rocket {
     rocket::ignite()
         .mount(self::MOUNT_POINT, self::routes())
         .mount(teams::MOUNT_POINT, teams::routes())
+        .register(catchers![not_found])
 }
 
 /// Root mount point for routes in this module.
@@ -36,6 +38,14 @@ pub const MOUNT_POINT: &str = "/";
 /// Return a list of the routes to mount from this module.
 pub fn routes() -> Vec<Route> {
     routes![healthcheck]
+}
+
+#[catch(404)]
+fn not_found() -> JsonValue {
+    json!({
+        "status": "error",
+        "reason": "Resource was not found."
+    })
 }
 
 /// API health check.

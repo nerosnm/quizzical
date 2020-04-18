@@ -1,2 +1,7 @@
-[global.databases]
+[development]
+address = "localhost"
+port = 8000
+log = "normal"
+
+[development.databases]
 zical = { url = "postgres://quiz:zical@localhost/zical" }

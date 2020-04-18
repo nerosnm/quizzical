@@ -28,17 +28,55 @@ pub mod db;
 pub mod service;
 
 use diesel_migrations::embed_migrations;
+use log::info;
+use rocket::{config::Environment, fairing::AdHoc};
+use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors, CorsOptions};
+
+use std::str::FromStr;
 
 embed_migrations! {}
 
 fn main() {
     api::ignite()
         .attach(db::DbConn::fairing())
-        .attach(rocket::fairing::AdHoc::on_launch(
-            "Run Migrations",
-            |rocket| {
-                db::DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
-            },
-        ))
+        .attach(AdHoc::on_attach("Configure CORS", |rocket| {
+            // Construct a CORS fairing based on Rocket's configured environment.
+            let cors = cors_fairing(rocket.config().environment);
+            // Attach the constructed fairing.
+            Ok(rocket.attach(cors))
+        }))
+        .attach(AdHoc::on_launch("Run Migrations", |rocket| {
+            db::DbConn::get_one(&rocket).and_then(|conn| embedded_migrations::run(&*conn).ok());
+        }))
         .launch();
+}
+
+/// Construct a CORS fairing, configured partly based on the environment Rocket is being launched
+/// in.
+fn cors_fairing(env: Environment) -> Cors {
+    // Allow FRONTEND_URL if provided. If not provided and we're in development mode, then instead
+    // allow http://localhost:5000.
+    let origins = std::env::var("FRONTEND_URL")
+        .ok()
+        .or_else(|| match env {
+            Environment::Development => Some("http://localhost:5000".into()),
+            _ => None,
+        })
+        .map(|url| vec![url])
+        .unwrap_or_default();
+
+    info!("Allowing origins: {:?}", origins);
+
+    CorsOptions::default()
+        .allowed_headers(AllowedHeaders::all())
+        .allowed_methods(
+            ["Get", "Post", "Delete"]
+                .iter()
+                .map(|s| FromStr::from_str(s).unwrap())
+                .collect(),
+        )
+        .allowed_origins(AllowedOrigins::some_exact(&*origins))
+        .allow_credentials(true)
+        .to_cors()
+        .expect("Cors fairing cannot be created")
 }
